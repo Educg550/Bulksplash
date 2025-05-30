@@ -188,8 +188,21 @@ const bulksplash = async (args) => {
     options.nameScheme = args.n ? 0 : 1;
     options.saveCredits = args.j ? args.j : false;
     options.shouldSaveApiKey = args.s ? args.s : false;
+    options.shouldWipeApiKey = args.r ? args.r : false;
 
-    if (shouldSaveApiKey && !options.apiKey) {
+    if (options.shouldWipeApiKey) {
+      try {
+        keytar.deletePassword(SERVICE, ACCOUNT);
+        console.log('✅ API key has been deleted successfully.');
+      }
+      catch (error) {
+        console.error(
+          '🚨 Error while deleting the API key. Please try again or save it manually | ' + error.message
+        );
+      }
+    }
+
+    if (options.shouldSaveApiKey && !options.apiKey) {
       console.error(
         '🚨 You need to provide an API key with the --k flag or save it manually.'
       );
