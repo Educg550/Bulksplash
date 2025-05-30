@@ -38,6 +38,7 @@ const bulksplash = async (args) => {
           name: 'shouldSaveApiKey',
           message: '💾 Do you want to save the API key for future use? (y/n)',
           validate: input => ['y', 'n'].includes(input.toLowerCase()) || 'Please enter y or n',
+          default: 'n',
         }
       );
     }
@@ -186,6 +187,22 @@ const bulksplash = async (args) => {
     options.featured = args.f ? args.f : false;
     options.nameScheme = args.n ? 0 : 1;
     options.saveCredits = args.j ? args.j : false;
+    options.shouldSaveApiKey = args.s ? args.s : false;
+
+    if (shouldSaveApiKey && !options.apiKey) {
+      console.error(
+        '🚨 You need to provide an API key with the --k flag or save it manually.'
+      );
+      return;
+    } else if (options.shouldSaveApiKey) {
+      try {
+        keytar.setPassword(SERVICE, ACCOUNT, options.apiKey);
+      } catch (error) {
+        console.error(
+          '🚨 Error while saving the API key. Please try again or save it manually | ' + error.message
+        );
+      }
+    }
   } else {
     await ask();
   }
